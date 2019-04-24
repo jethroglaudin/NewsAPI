@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Merriweather');
+
+        h1 {
+            font-family: 'Merriweather', sans-serif;
+            color: black;
+        }
+
+        h2 {
+            font-size: 30px;
+        }
+
+        body {
+            text-align: center;
+            background-color: #e1e8f0;
+        }
+
+        span {
+            font-size: 25px;
+        }
+
+        .main {
+            line-height: 100px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #typetxt {
+            width: 250px;
+            margin: 20px;
+            border-radius: 4px;
+        }
+
+        #datetxt {
+            width: 250px;
+            margin: 20px;
+            /*border: 2px black;*/
+            border-radius: 4px;
+            /*border-shadow: 2px;*/
+        }
+
+        .row {
+            column-count: 2;
+        }
+
+        .apiContent {
+            /*display: flex;*/
+            /*flex-basis: auto;*/
+            /*flex-direction: row;*/
+            /*justify-content: center;*/
+            /*align-items: center;*/
+        }
+
+        .btn {
+            background-color: #f38b00;
+            /*border: 3px solid #f38b00;*/
+            border-radius: 3px;
+            height: 100px;
+            width: 136px;
+            text-decoration: none;
+            font-size: 25px;
+            padding: 10px;
+            color: white;
+
+        }
+
+        .img {
+            height: 50%;
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Search Engine</h1>
+    <div class="main">
+        <form id="search">
+            <span>Input:</span>
+            <input id="typetxt" type="text" name="" />
+            <br>
+        </form>
+        <form id="fromDate">
+            <span>Search Date:</span>
+            <!--<input id "datetxt" type="date" name=""/>-->
+            <input type="text" id='datetxt' placeholder="Data range: ex. 2019-03-13" />
+        </form>
+        <br>
+        <button id="searchBtn">Search</button>
+
+    </div>
+    <div class=r ow>
+        <div id="addTextHere"></div>
+    </div>
+    <script type="text/javascript">
+       // const apiKey = 'ADD Your API KEY HERE';
+        const query = document.forms['search'].querySelector('input');
+        document.querySelector('#typetxt').addEventListener('click', loadSearch);
+        const date = document.forms['fromDate'].querySelector('input').value;
+
+        function loadSearch() {
+            let xhrCall = new XMLHttpRequest();
+            query.addEventListener('keyup', function(e) {
+                e.preventDefault();
+                let term = e.target.value
+                let url = 'https://newsapi.org/v2/everything?' +
+                    'q=' + term + '&' +
+                    'from=' + date + '&' +
+                    'sortBy=popularity&' +
+                    'apiKey=' + apiKey + ''
+                xhrCall.open('GET', url, true);
+                xhrCall.send();
+
+                xhrCall.onload = function() {
+                    let data = JSON.parse(this.responseText);
+                    console.log(data)
+
+                    let article = data.articles;
+                    let fullSearch = "";
+
+                    document.querySelector("#searchBtn").addEventListener('click', postSearch);
+
+                    function postSearch() {
+                        for (let i in article) {
+                            fullSearch += `<div class="apiContent><h2>Title:<a href = "${article[i].url}">${article[i].title}</a></h2><br><br>
+                      <img class = "img" src="${article[i].urlToImage}"><br><br>
+                      <p>${article[i].description}</p><a href = "${article[i].url}" class ="btn">Read More</a><br><br></div>`
+                        }
+                        document.querySelector('#addTextHere').innerHTML = fullSearch;
+                    }
+                    
+                };
+
+            });
+
+
+        }
+    </script>
+</body>
+
+</html>
